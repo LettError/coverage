@@ -40,6 +40,17 @@ The numerical average of the densities calculated for a couple of languages can 
 
 Supported in this code: Albanian, Basque, Bosnian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, German, Hungarian, Icelandic, Italian, Latvian, Lithuanian, Norwegian, Polish, Portuguese, Romanian, Slovak, Slovenian, Spanish, Swedish and Turkish. While the differences between these languages are small, it does remove any bias to a specific language.
 
+### Comparing fonts
+
+Here is a graph of a couple of typefaces with different weights. Horizontally is the coverage value, plotted against `font.info.openTypeOS2WeightClass`.
+![Comparing a couple of fonts](graph.png)
+
+* Most "Regular" values are at 400, most "Bold" values at 700, but the corresponding coverage values are spread much wider. This illustrates that `font.info.openTypeOS2WeightClass` is not a reliable indicator for weight.
+* Letter Gothic Bold is actually lighter than most.
+* Times Bold and Caslon Bold have almost the same coverage.
+* Roboto Black has a weightClass value of 400 looks out of place.
+* These typefaces were selected rather arbitrarily: I happen to have the data. It might not be the latest version.
+
 
 ## Discussion
 The frequency tables used in this calculation do not include punctuation. In many typefaces the punctuation symbols are lighter than the letters and that would skew the results towards a lighter number. But then the texts used to compile the frequency tables would need to be examined as well. Are all the texts on a comparable subject for instance? How do the average line lengths compare? Are there more or fewer quotations in the text? How does the word space fit in all this? 
