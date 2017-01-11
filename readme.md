@@ -1,7 +1,7 @@
 
 #A calculation for the gray level of text
 
-As any introduction to typography will tell you, font families come in different *weights*, ranging from thin to black and many steps in between. These weights are used to create hierarchies and structure within the text. A bold headline will catch the attention. A lighter weight for reading, etc. While the word **weight** has connotations of physics and empirical envidence, the typographic reality is a bit messy. Let's start by having a look at the data in the font.
+As any introduction to typography will tell you, font families come in different *weights*, ranging from thin to black and many steps in between. These weights are used to create hierarchies and structure within the text. A bold headline will catch the attention. A lighter weight for reading, etc. While the word **weight** has connotations of physics and empirical evidence, the typographic reality is a bit messy. Let's start by having a look at the data in the font.
 
 ##Names
 While care is given to *naming* the different weights within a family, there are great differences *between* typefaces. There is no guarantee that the *bold* in one typeface has the same weight as a similarly named weight in another. This is usually not really a problem: typographers, designers and anyone selecting a font will do so by looking at the font first and not rely on the name. Bottom line is that the font name does not really provide reliable information about the weight.
