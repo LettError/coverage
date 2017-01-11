@@ -18,20 +18,18 @@ Assuming the shape is drawn with black on a white background and that the shape 
 
 ![](white_black_a.png)
 
- If there is no shape in the letter, the level is white. If the shape covers everything the result will be black. And then the steps in between. Here I need to remark that there are many shapes where this would not be true. For instance, a filled with a fine chess board pixel grid (one off, one on) would produce the same numerical result as a glyph that has a single black box on the bottom half. Optically these would not be the same at all. But I'm assuming we're looking at *normal fonts* and I'm permitting myself the luxury of not even defining what those are. You know what they are and there will be some averaging later on anyway.
+ If there is no shape in the letter, the level is white. If the shape covers everything the result will be black. And then the steps in between. Here I need to remark that there are many shapes where this would not be true. For instance, a filled with a fine chess board pixel grid (one off, one on) would produce the same numerical result as a glyph that has a single black box on the bottom half. Optically these would not be the same at all.
+ 
+ ![](pixels.png)
 
-### The coverage of a single glyph
+Different ways in which the assumption that the coverage is based on can fail. All of the images above will have a 50% coverage result. But (permitting a Gaussian blur to stand in for the diffraction in the eye) obviously **b** will appear as a much darker shape than **d**. So, if applied to a oddball fonts the results might not be very reliable. But I'm assuming we're looking at **normal fonts** and I'm permitting myself the luxury of not even defining what those are.
 
-`gray level = area of the shape / (glyph advance width * units per em)`
+With all this in mind, the coverage of a single glyph can be expressed as:
 
-This is a number that can be calculated with relative ease and speed. 
-
-![](pixels.png)
-
-Different ways in which the assumption that the coverage is based on can fail. All of the images above will have a 50% coverage result. But (permitting a Gaussian blur to stand in for the diffraction in the eye) obviously **b** will appear as a much darker shape than **d**. So, if applied to a oddball fonts the results might not be very reliable.
+`coverage = area of the shape / (glyph advance width * units per em)`
 
 ## Text
-Suppose we calculate this gray level for each glyph in a font. Then what? A **numerical average** of all these results will not produce a value that is useful. We need to look at how the font behaves in text. This introduces a new factor: language. We need to know how often a certain shape appears. The next question is then: which language?
+Suppose we calculate this gray level for each glyph in a font. Then what? A **numerical average** of all these results will not produce a value that is useful. Each glyph will have a different coverage value, so we need to look at the distribution of the glyphs. How the font behaves in text. This introduces a new factor: language. We need to know how often a certain shape appears. The next question is then: which language?
 We need to make sure the tables are case sensitive: the frequencies of initial capitals in different languages are quite different from the lowercase frequencies. These values need to be normalized so that the sum of all frequencies is 1.
 
 ### The gray level of a set of glyphs, in one language
@@ -39,6 +37,9 @@ We need to make sure the tables are case sensitive: the frequencies of initial c
 
 ### Average of >1 languages
 The numerical average of the densities calculated for a couple of languages can then be used as an relatively objective value for the color, or gray, of a specific font.
+
+Supported in this code: Albanian, Basque, Bosnian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, German, Hungarian, Icelandic, Italian, Latvian, Lithuanian, Norwegian, Polish, Portuguese, Romanian, Slovak, Slovenian, Spanish, Swedish and Turkish. While the differences between these languages are small, it does remove any bias to a specific language.
+
 
 ## Discussion
 The frequency tables used in this calculation do not include punctuation. In many typefaces the punctuation symbols are lighter than the letters and that would skew the results towards a lighter number. But then the texts used to compile the frequency tables would need to be examined as well. Are all the texts on a comparable subject for instance? How do the average line lengths compare? Are there more or fewer quotations in the text? How does the word space fit in all this? 
