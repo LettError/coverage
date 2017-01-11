@@ -60,6 +60,18 @@ Such deep statistical analysis really is a different project. The languages are 
 * **calculateGlyphCoverage(glyph, font)** calculates the coverage for a single glyph.
 * The module `data.py` exports a frequency table and a function that filters the supported languages based on the glyphs in the font. 
 
+## Usage
+* Pardon the basic interface. I don't want to complicate it with a UI right now.
+* Install the code.
+* In a script window:
+
+```python
+from coverage import getFontCoverage
+
+for f in AllFonts():
+    print f.info.familyName, f.info.styleName, getFontCoverage(f)
+```
+
 ## Todo
 * Calculate complete families, find fonts that have similar results, verify if these actually appear to have the same weight.
 * Perhaps weigh the shapes inside the xheight more than the shapes above or below.
