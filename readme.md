@@ -22,14 +22,14 @@ Assuming the shape is drawn with black on a white background and that the shape 
  
  ![](pixels.png)
 
-Different ways in which the assumption that the coverage is based on can fail. All of the images above will have a 50% coverage result. But (permitting a Gaussian blur to stand in for the diffraction in the eye) obviously **b** will appear as a much darker shape than **d**. So, if applied to a oddball fonts the results might not be very reliable. But I'm assuming we're looking at **normal fonts** and I'm permitting myself the luxury of not even defining what those are.
+All of the images above have a 50% coverage result. But (permitting a Gaussian blur to represent the diffraction in the eye) obviously **b** will appear as a much darker shape than **d**. So, if applied to a oddball fonts the results might not be very reliable. But I'm assuming we're looking at **normal fonts** and I'm permitting myself the luxury of not even defining what those are.
 
 With all this in mind, the coverage of a single glyph can be expressed as:
 
 `coverage = area of the shape / (glyph advance width * units per em)`
 
 ## Text
-Suppose we calculate this gray level for each glyph in a font. Then what? A **numerical average** of all these results will not produce a value that is useful. Each glyph will have a different coverage value, so we need to look at the distribution of the glyphs. How the font behaves in text. This introduces a new factor: language. We need to know how often a certain shape appears. The next question is then: which language?
+Suppose we calculate this gray level for each glyph in a font. Then what? A **numerical average** of all these glyph by glyph results will not produce a value that is useful. Each glyph will have a different coverage value, so we need to look at the distribution of the glyphs. How the font behaves in text. This introduces a new factor: language. We need to know how often certain shapes appear. The next question is then: which language?
 We need to make sure the tables are case sensitive: the frequencies of initial capitals in different languages are quite different from the lowercase frequencies. These values need to be normalized so that the sum of all frequencies is 1.
 
 ### The gray level of a set of glyphs, in one language
@@ -53,7 +53,7 @@ Here is a graph of a couple of typefaces with different weights. Horizontally is
 
 
 ## Discussion
-The frequency tables used in this calculation do not include punctuation. In many typefaces the punctuation symbols are lighter than the letters and that would skew the results towards a lighter number. But then the texts used to compile the frequency tables would need to be examined as well. Are all the texts on a comparable subject for instance? How do the average line lengths compare? Are there more or fewer quotations in the text? How does the word space fit in all this? 
+The frequency tables used in this calculation do not include punctuation or wordspaces. In many typefaces the punctuation symbols are lighter than the letters and that would skew the result. But then the texts used to compile the frequency tables would need to be examined as well: are all the texts on a comparable subject for instance? How do the average line lengths compare? Are there more or fewer quotations in the text? How does the word space fit in all this? 
 
 Such deep statistical analysis really is a different project. The languages are there to make sure there is no bias towards one specific language just by choosing one single frequency table.
 
@@ -63,7 +63,7 @@ Such deep statistical analysis really is a different project. The languages are 
 * The font width is definitely a factor that might make the results less useful in extreme designs: wider typefaces have more weight in the glyph rectangle.
 * In order to be able to compare different typefaces it is necessary to calculate the densities *with the same frequency tables.* Which makes it difficult to compare across scripts. 
 * I'm ignoring the effects kerning and tracking will have on the coverage. This will definitely be an interesting addition, it could factor in pair frequencies, but these would need to be correlated with the character frequencies.
-* I'm also ignoring any effects that might be caused by lighting conditions, the reading distance and type size, or any conditions of the eye.
+* I'm also ignoring any effects that might be caused by lighting conditions, inkspread, reading distance and type size, or any conditions of the eye.
 * Between the languages there are not only differences between the frequencies, but also between the charactersets. If we're analysing a font that is being worked on it might not have all the characters that a language needs. Rather then make assumptions about certain characters, we need to check first if a font has all the characters required by the table.
 
 ## Code
