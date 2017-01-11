@@ -14,7 +14,11 @@ Unfortunately, assigning the fontWeight value is not easy: older applications ex
 But the weight differences are real: we can observe them by looking at text. So maybe we need to see how the individual marks on the page contribute to the weight of the text. And then work our way up. A glyph in a Latin font has a rectangle that is defined by its advance width and a height: either the font's units per em value, or the distance between ascender and descender. The shapes in the glyph may stick out of the rectangle, but generally they don't.
 In simple text shaping these rectangles are lined up next to each other. There are of course many, much more complex ways in which the glyphs can be arranged.
 
-Assuming the shape is drawn with black on a white background and that the shape does not exceed the boundaries of the width or height, then the gray scale is going to be between black and white. [illustration] If there is no shape in the letter, the level is white. If the shape covers everything the result will be black. And then the steps in between. Here I need to remark that there are many shapes where this would not be true. For instance, a filled with a fine chess board pixel grid (one off, one on) would produce the same numerical result as a glyph that has a single black box on the bottom half. Optically these would not be the same at all. But I'm assuming we're looking at *normal fonts* and I'm permitting myself the luxury of not even defining what those are. You know what they are and there will be some averaging later on anyway.
+Assuming the shape is drawn with black on a white background and that the shape does not exceed the boundaries of the width or height, then the gray scale is going to be between black and white. 
+
+![](white_black_a.png)
+
+ If there is no shape in the letter, the level is white. If the shape covers everything the result will be black. And then the steps in between. Here I need to remark that there are many shapes where this would not be true. For instance, a filled with a fine chess board pixel grid (one off, one on) would produce the same numerical result as a glyph that has a single black box on the bottom half. Optically these would not be the same at all. But I'm assuming we're looking at *normal fonts* and I'm permitting myself the luxury of not even defining what those are. You know what they are and there will be some averaging later on anyway.
 
 ### The coverage of a single glyph
 
@@ -24,7 +28,7 @@ This is a number that can be calculated with relative ease and speed.
 
 ![](pixels.png)
 
-Different ways in which the assumption that the coverage is based on can fail. All of the images above will have a 50% coverage result. But obviously **b** will appear as a much darker shape than **d**. So, if applied to a oddball fonts the results might not be very reliable.
+Different ways in which the assumption that the coverage is based on can fail. All of the images above will have a 50% coverage result. But (permitting a Gaussian blur to stand in for the diffraction in the eye) obviously **b** will appear as a much darker shape than **d**. So, if applied to a oddball fonts the results might not be very reliable.
 
 ## Text
 Suppose we calculate this gray level for each glyph in a font. Then what? A **numerical average** of all these results will not produce a value that is useful. We need to look at how the font behaves in text. This introduces a new factor: language. We need to know how often a certain shape appears. The next question is then: which language?

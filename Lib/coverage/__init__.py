@@ -6,6 +6,7 @@
 
 from __future__ import print_function, division
 
+import os
 from pprint import pprint 
 from fontTools.pens.areaPen import AreaPen
 from data import *
@@ -100,7 +101,10 @@ def getFontCoverage(f):
             key = cmap.get(ord(char))
             if not key: continue
             g = f[key]
-            a = calculateGlyphCoverage(g, f)
+            try:
+                a = calculateGlyphCoverage(g, f)
+            except:
+                print("failed calculating the coverage for %s in %s"%(g.name, os.path.basename(f.path)))
             if a > 0:
                 languageTotal += a * weight
         total.append(languageTotal/len(table))
