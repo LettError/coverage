@@ -7,7 +7,7 @@ As any introduction to typography will tell you, font families come in different
 While care is given to *naming* the different weights within a family, there are great differences *between* typefaces. There is no guarantee that the *bold* in one typeface has the same weight as a similarly named weight in another. This is usually not really a problem: typographers, designers and anyone selecting a font will do so by looking at the font first and not rely on the name. Bottom line is that the font name does not really provide reliable information about the weight.
 
 ##WeightClass
-The OpenType font format has the ** usWeightClass** value [[specification]](https://www.microsoft.com/typography/otspec/os2.htm#wtc). On a scale between 0 to 1000, this value can be used, for instance, to order the weights in a font in a menu, or to select a weight that is "bolder" than the current font. That looks more promising.
+The OpenType font format has the **usWeightClass** value [[specification]](https://www.microsoft.com/typography/otspec/os2.htm#wtc). On a scale between 0 to 1000, this value can be used, for instance, to order the weights in a font in a menu, or to select a weight that is "bolder" than the current font. That looks more promising.
 Unfortunately, assigning the fontWeight value is not easy: older applications expect this value only in steps of 100 and some even respond with unexpected results to values under 250. There is not much room for families with many weights, the values have to be assigned "by hand" and often represent some sort of ranking and is seperate from any geometry in the font. So, like the font names, the fontWeight value can not really be used to make objective comparisons between typefaces.
 
 ##Ink
@@ -38,7 +38,7 @@ We need to make sure the tables are case sensitive: the frequencies of initial c
 ### Average of >1 languages
 The numerical average of the densities calculated for a couple of languages can then be used as an relatively objective value for the color, or gray, of a specific font.
 
-Supported in this code: Albanian, Basque, Bosnian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, German, Hungarian, Icelandic, Italian, Latvian, Lithuanian, Norwegian, Polish, Portuguese, Romanian, Slovak, Slovenian, Spanish, Swedish and Turkish. While the differences between these languages are small, it does remove any bias to a specific language.
+Supported in this code: Albanian, Basque, Bosnian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, German, Hungarian, Icelandic, Italian, Latvian, Lithuanian, Norwegian, Polish, Portuguese, Romanian, Slovak, Slovenian, Spanish, Swedish and Turkish.
 
 ### Comparing fonts
 
@@ -48,8 +48,8 @@ Here is a graph of a couple of typefaces with different weights. Horizontally is
 * Most "Regular" values are at 400, most "Bold" values at 700, but the corresponding coverage values are spread much wider. This illustrates that `font.info.openTypeOS2WeightClass` is not a reliable indicator for weight.
 * Letter Gothic Bold is actually lighter than most.
 * Times Bold and Caslon Bold have almost the same coverage.
-* Roboto Black has a weightClass value of 400 looks out of place.
-* These typefaces were selected rather arbitrarily: I happen to have the data. It might not be the latest version.
+* Roboto Black has a weightClass value of 400, it looks out of place.
+* These typefaces were selected rather arbitrarily: I happen to have the data. The fonts might not be the latest version.
 
 
 ## Discussion
