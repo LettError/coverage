@@ -51,6 +51,17 @@ Here is a graph of a couple of typefaces with different weights. Horizontally is
 * Roboto Black has a weightClass value of 400 looks out of place.
 * These typefaces were selected rather arbitrarily: I happen to have the data. It might not be the latest version.
 
+## Width
+We can also calculate a representative value for the average width of a font. There is no absolute minimum or maximum, but we can establish some rules for this value. Considering:
+
+- a numerical average width of all characters in a font will not be enough: we need to incorporate character frequencies for a couple of languages.
+- **Font.unitsPerEm** needs to be involved: we should be able to compare the width values of fonts with different ems. A TrueType version of the font with a 2048 em should get the same result as a CFF version with a 1000 unit em. 
+
+## Method
+
+* Single font, single language: `sum (normalized freq * char width) / font.unitsPerEm`
+
+* Avaerage of all languages: `the numerical average of all results of all available languages`
 
 ## Discussion
 The frequency tables used in this calculation do not include punctuation. In many typefaces the punctuation symbols are lighter than the letters and that would skew the results towards a lighter number. But then the texts used to compile the frequency tables would need to be examined as well. Are all the texts on a comparable subject for instance? How do the average line lengths compare? Are there more or fewer quotations in the text? How does the word space fit in all this? 
@@ -68,9 +79,10 @@ Such deep statistical analysis really is a different project. The languages are 
 
 ## Code
 * The code in this package is for [RoboFont](http://doc.robofont.com). 
-* **getFontCoverage(font)** calculates the coverage for a single font, using frequency tables for 27 different languages. It's reasonably fast but could be optimized. 
+* **getFontCoverage(font)** calculates the coverage for a single font, using frequency tables for 27 different languages.
+* **getFontWidth(font)** calculates a weighted average width for a font using the same languages.
 * **calculateGlyphCoverage(glyph, font)** calculates the coverage for a single glyph.
-* The module `data.py` exports a frequency table and a function that filters the supported languages based on the glyphs in the font. 
+* The module `data.py` exports a frequency table and a function that filters the supported languages based on the glyphs in the font.
 
 ## Usage
 * Pardon the basic interface. I don't want to complicate it with a UI right now.
@@ -81,7 +93,7 @@ Such deep statistical analysis really is a different project. The languages are 
 from coverage import getFontCoverage
 
 for f in AllFonts():
-    print f.info.familyName, f.info.styleName, getFontCoverage(f)
+    print f.info.familyName, f.info.styleName, getFontCoverage(f), getFontWidth(f)
 ```
 
 ## Todo

@@ -105,8 +105,31 @@ def getFontCoverage(f):
                 a = calculateGlyphCoverage(g, f)
             except:
                 print("failed calculating the coverage for %s in %s"%(g.name, os.path.basename(f.path)))
+                a = 0
             if a > 0:
                 languageTotal += a * weight
+        total.append(languageTotal/len(table))
+    return sum(total) / len(supportedLanguages)
+
+def getFontWidth(f):
+    """
+        Calculate a weighted average of all glyph advance widths.
+    """
+    global frequencies
+    total = []
+    cmap, supportedLanguages = checkLanguages(f)
+    if not cmap:
+        # a font without unicode values?
+        return None
+    if not supportedLanguages:
+        return None
+    for lang in supportedLanguages:
+        table = frequencies[lang]
+        languageTotal = 0
+        for char, weight in table.items():
+            key = cmap.get(ord(char))
+            if not key: continue
+            languageTotal += (f[key].width/f.info.unitsPerEm)
         total.append(languageTotal/len(table))
     return sum(total) / len(supportedLanguages)
 
@@ -121,6 +144,7 @@ if __name__ == "__main__":
             value = calculateGlyphCoverage(font[name])
             totes.append(value)
             print(name, value)
-        print("\nweighted font coverage", font.info.familyName, font.info.styleName, getFontCoverage(font))
-        print("\naverage font coverage", font.info.familyName, font.info.styleName, sum(totes)/len(totes))
-        
+        print(font.info.familyName, font.info.styleName)
+        print("\nweighted font coverage", getFontCoverage(font))
+        print("\naverage font coverage", sum(totes)/len(totes))
+        print("\nweighted font width", getFontWidth(font))
