@@ -7,7 +7,7 @@ As any introduction to typography will tell you, font families come in different
 While care is given to *naming* the different weights within a family, there are great differences *between* typefaces. There is no guarantee that the *bold* in one typeface has the same weight as a similarly named weight in another. This is usually not really a problem: typographers, designers and anyone selecting a font will do so by looking at the font first and not rely on the name. Bottom line is that the font name does not really provide reliable information about the weight.
 
 ##WeightClass
-The OpenType font format has the ** usWeightClass** value [[specification]](https://www.microsoft.com/typography/otspec/os2.htm#wtc). On a scale between 0 to 1000, this value can be used, for instance, to order the weights in a font in a menu, or to select a weight that is "bolder" than the current font. That looks more promising.
+The OpenType font format has the **usWeightClass** value [[specification]](https://www.microsoft.com/typography/otspec/os2.htm#wtc). On a scale between 0 to 1000, this value can be used, for instance, to order the weights in a font in a menu, or to select a weight that is "bolder" than the current font. That looks more promising.
 Unfortunately, assigning the fontWeight value is not easy: older applications expect this value only in steps of 100 and some even respond with unexpected results to values under 250. There is not much room for families with many weights, the values have to be assigned "by hand" and often represent some sort of ranking and is seperate from any geometry in the font. So, like the font names, the fontWeight value can not really be used to make objective comparisons between typefaces.
 
 ##Ink
@@ -22,14 +22,14 @@ Assuming the shape is drawn with black on a white background and that the shape 
  
  ![](pixels.png)
 
-Different ways in which the assumption that the coverage is based on can fail. All of the images above will have a 50% coverage result. But (permitting a Gaussian blur to stand in for the diffraction in the eye) obviously **b** will appear as a much darker shape than **d**. So, if applied to a oddball fonts the results might not be very reliable. But I'm assuming we're looking at **normal fonts** and I'm permitting myself the luxury of not even defining what those are.
+All of the images above have a 50% coverage result. But (permitting a Gaussian blur to represent the diffraction in the eye) obviously **b** will appear as a much darker shape than **d**. So, if applied to a oddball fonts the results might not be very reliable. But I'm assuming we're looking at **normal fonts** and I'm permitting myself the luxury of not even defining what those are.
 
 With all this in mind, the coverage of a single glyph can be expressed as:
 
 `coverage = area of the shape / (glyph advance width * units per em)`
 
 ## Text
-Suppose we calculate this gray level for each glyph in a font. Then what? A **numerical average** of all these results will not produce a value that is useful. Each glyph will have a different coverage value, so we need to look at the distribution of the glyphs. How the font behaves in text. This introduces a new factor: language. We need to know how often a certain shape appears. The next question is then: which language?
+Suppose we calculate this gray level for each glyph in a font. Then what? A **numerical average** of all these glyph by glyph results will not produce a value that is useful. Each glyph will have a different coverage value, so we need to look at the distribution of the glyphs. How the font behaves in text. This introduces a new factor: language. We need to know how often certain shapes appear. The next question is then: which language?
 We need to make sure the tables are case sensitive: the frequencies of initial capitals in different languages are quite different from the lowercase frequencies. These values need to be normalized so that the sum of all frequencies is 1.
 
 ### The gray level of a set of glyphs, in one language
@@ -38,7 +38,7 @@ We need to make sure the tables are case sensitive: the frequencies of initial c
 ### Average of >1 languages
 The numerical average of the densities calculated for a couple of languages can then be used as an relatively objective value for the color, or gray, of a specific font.
 
-Supported in this code: Albanian, Basque, Bosnian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, German, Hungarian, Icelandic, Italian, Latvian, Lithuanian, Norwegian, Polish, Portuguese, Romanian, Slovak, Slovenian, Spanish, Swedish and Turkish. While the differences between these languages are small, it does remove any bias to a specific language.
+Supported in this code: Albanian, Basque, Bosnian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, German, Hungarian, Icelandic, Italian, Latvian, Lithuanian, Norwegian, Polish, Portuguese, Romanian, Slovak, Slovenian, Spanish, Swedish and Turkish.
 
 ### Comparing fonts
 
@@ -48,8 +48,8 @@ Here is a graph of a couple of typefaces with different weights. Horizontally is
 * Most "Regular" values are at 400, most "Bold" values at 700, but the corresponding coverage values are spread much wider. This illustrates that `font.info.openTypeOS2WeightClass` is not a reliable indicator for weight.
 * Letter Gothic Bold is actually lighter than most.
 * Times Bold and Caslon Bold have almost the same coverage.
-* Roboto Black has a weightClass value of 400 looks out of place.
-* These typefaces were selected rather arbitrarily: I happen to have the data. It might not be the latest version.
+* Roboto Black has a weightClass value of 400, it looks out of place.
+* These typefaces were selected rather arbitrarily: I happen to have the data. The fonts might not be the latest version.
 
 ## Width
 We can also calculate a representative value for the average width of a font. There is no absolute minimum or maximum, but we can establish some rules for this value. Considering:
@@ -64,7 +64,7 @@ We can also calculate a representative value for the average width of a font. Th
 * Avaerage of all languages: `the numerical average of all results of all available languages`
 
 ## Discussion
-The frequency tables used in this calculation do not include punctuation. In many typefaces the punctuation symbols are lighter than the letters and that would skew the results towards a lighter number. But then the texts used to compile the frequency tables would need to be examined as well. Are all the texts on a comparable subject for instance? How do the average line lengths compare? Are there more or fewer quotations in the text? How does the word space fit in all this? 
+The frequency tables used in this calculation do not include punctuation or wordspaces. In many typefaces the punctuation symbols are lighter than the letters and that would skew the result. But then the texts used to compile the frequency tables would need to be examined as well: are all the texts on a comparable subject for instance? How do the average line lengths compare? Are there more or fewer quotations in the text? How does the word space fit in all this? 
 
 Such deep statistical analysis really is a different project. The languages are there to make sure there is no bias towards one specific language just by choosing one single frequency table.
 
@@ -74,7 +74,7 @@ Such deep statistical analysis really is a different project. The languages are 
 * The font width is definitely a factor that might make the results less useful in extreme designs: wider typefaces have more weight in the glyph rectangle.
 * In order to be able to compare different typefaces it is necessary to calculate the densities *with the same frequency tables.* Which makes it difficult to compare across scripts. 
 * I'm ignoring the effects kerning and tracking will have on the coverage. This will definitely be an interesting addition, it could factor in pair frequencies, but these would need to be correlated with the character frequencies.
-* I'm also ignoring any effects that might be caused by lighting conditions, the reading distance and type size, or any conditions of the eye.
+* I'm also ignoring any effects that might be caused by lighting conditions, inkspread, reading distance and type size, or any conditions of the eye.
 * Between the languages there are not only differences between the frequencies, but also between the charactersets. If we're analysing a font that is being worked on it might not have all the characters that a language needs. Rather then make assumptions about certain characters, we need to check first if a font has all the characters required by the table.
 
 ## Code
