@@ -1,5 +1,8 @@
  # -*- coding: utf-8 -*-
-
+import os
+import sys
+import codecs
+import frequencies
 
 # Character frequency data for Latin scripts, with permission from @bianca_berning
 
@@ -147,17 +150,9 @@ cmap = {65: 'A',
 
 names = ["Albanian", "Basque", "Bosnian", "Catalan", "Croatian", "Czech", "Danish", "Dutch", "English", "Estonian", "Finnish", "French", "German", "Hungarian", "Icelandic", "Italian", "Latvian", "Lithuanian", "Norwegian", "Polish", "Portuguese", "Romanian", "Slovak", "Slovenian", "Spanish", "Swedish", "Turkish"]
 
-import sys
-import codecs
-
-# read data.txt
-d = []
-f = codecs.open('data.txt', 'r', encoding="utf-8")
-data = f.read()
-f.close()
-
 # parse the text
-for l in data.split("\n"):
+d = []
+for l in frequencies.text.split("\n"):
     if len(l)==0:
         continue
     parts =  l.split("\t")
@@ -165,6 +160,9 @@ for l in data.split("\n"):
     d.append(parts)
 
 frequencies = {}
+coverageNames = cmap.values()
+coverageNames.sort()
+
 
 for i, line in enumerate(d):
     for j, languageName in enumerate(names):
@@ -198,8 +196,9 @@ def checkLanguages(font):
         if ok:
             supportedLanguages.append(languageName)
     return cmap, supportedLanguages
+
             
-__all__ = ["checkLanguages", "frequencies", 'data']
+__all__ = ["checkLanguages", "frequencies", 'cmap', 'coverageNames']
 
 if __name__ == "__main__":
     from pprint import pprint

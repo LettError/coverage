@@ -9,8 +9,9 @@ from __future__ import print_function, division
 import os
 from pprint import pprint 
 from fontTools.pens.areaPen import AreaPen
-from data import *
-from lib.fontObjects.robofabWrapper import RobofabWrapperGlyph as RGlyph
+import coverage.data
+
+#from lib.fontObjects.robofabWrapper import RobofabWrapperGlyph as RGlyph
 
 from ufoLib.pointPen import AbstractPointPen
 from defcon.pens.transformPointPen import TransformPointPen
@@ -86,25 +87,29 @@ def getFontCoverage(f):
         Use frequencies of multiple languages to average out language specific bias.
         So it does not use all the glyphs, just the A-Z, a-z for the languages we have fequencies for.
     """
-    global frequencies
     total = []
-    cmap, supportedLanguages = checkLanguages(f)
+    cmap, supportedLanguages = coverage.data.checkLanguages(f)
     if not cmap:
         # a font without unicode values?
         return None
     if not supportedLanguages:
         return None
     for lang in supportedLanguages:
-        table = frequencies[lang]
+        table = coverage.data.frequencies[lang]
         languageTotal = 0
-        for char, weight in table.items():
-            key = cmap.get(ord(char))
-            if not key: continue
-            g = f[key]
+        for glyphName, weight in table.items():
+            if glyphName in f:
+                g = f[glyphName]
+            else:
+                continue
             try:
                 a = calculateGlyphCoverage(g, f)
             except:
-                print("failed calculating the coverage for %s in %s"%(g.name, os.path.basename(f.path)))
+                if f.path is not None:
+                    fontName = os.path.basename(f.path)
+                else:
+                    fontName = "object: %s-%s"%(f.info.familyName, f.info.styleName)
+                print("failed calculating the coverage for %s in %s"%(g.name, fontName))
                 a = 0
             if a > 0:
                 languageTotal += a * weight
@@ -115,36 +120,37 @@ def getFontWidth(f):
     """
         Calculate a weighted average of all glyph advance widths.
     """
-    global frequencies
     total = []
-    cmap, supportedLanguages = checkLanguages(f)
+    cmap, supportedLanguages = coverage.data.checkLanguages(f)
     if not cmap:
         # a font without unicode values?
         return None
     if not supportedLanguages:
         return None
     for lang in supportedLanguages:
-        table = frequencies[lang]
+        table = coverage.data.frequencies[lang]
         languageTotal = 0
-        for char, weight in table.items():
-            key = cmap.get(ord(char))
-            if not key: continue
-            languageTotal += (f[key].width/f.info.unitsPerEm)
+        for glyphName, weight in table.items():
+            if glyphName in f:
+                languageTotal += (f[glyphName].width/f.info.unitsPerEm)
         total.append(languageTotal/len(table))
     return sum(total) / len(supportedLanguages)
 
     
 if __name__ == "__main__":
-    font = CurrentFont()
-    if font is not None:
-        k = font.keys()
-        k.sort()
-        totes = []
-        for name in k:
-            value = calculateGlyphCoverage(font[name])
-            totes.append(value)
-            print(name, value)
-        print(font.info.familyName, font.info.styleName)
-        print("\nweighted font coverage", getFontCoverage(font))
-        print("\naverage font coverage", sum(totes)/len(totes))
-        print("\nweighted font width", getFontWidth(font))
+    try:
+        font = CurrentFont()
+        if font is not None:
+            k = font.keys()
+            k.sort()
+            totes = []
+            for name in k:
+                value = calculateGlyphCoverage(font[name])
+                totes.append(value)
+                print(name, value)
+            print(font.info.familyName, font.info.styleName)
+            print("\nweighted font coverage", getFontCoverage(font))
+            print("\naverage font coverage", sum(totes)/len(totes))
+            print("\nweighted font width", getFontWidth(font))
+    except NameError:
+        pass
