@@ -195,7 +195,7 @@ def checkLanguages(font):
                 break
         if ok:
             supportedLanguages.append(languageName)
-    return cmap, supportedLanguages
+    return supportedLanguages
 
             
 __all__ = ["checkLanguages", "frequencies", 'cmap', 'coverageNames']

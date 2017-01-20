@@ -6,12 +6,14 @@
 
 from __future__ import print_function, division
 
+import sys, traceback
+
 import os
 from pprint import pprint 
 from fontTools.pens.areaPen import AreaPen
 import coverage.data
 
-#from lib.fontObjects.robofabWrapper import RobofabWrapperGlyph as RGlyph
+from lib.fontObjects.robofabWrapper import RobofabWrapperGlyph as RGlyph
 
 from ufoLib.pointPen import AbstractPointPen
 from defcon.pens.transformPointPen import TransformPointPen
@@ -54,11 +56,13 @@ def decomposeRemoveOverlapFactory(glyph, font=None):
     new.unicode = glyph.unicode
     return new
     
-def calculateGlyphCoverage(glyph, font=None):
+def calculateGlyphCoverage(glyph, font=None, cache=None):
     """
         Area of the glyph / area of the (font.em * glyph.width)
         This calculates the coverage of any glyph.
     """
+    if cache is None:
+        cache = {}
     if glyph.width == 0:
         return 0
     if font is None:
@@ -67,7 +71,11 @@ def calculateGlyphCoverage(glyph, font=None):
             return 0
     if font.info.unitsPerEm == 0:
         return 0
-    new = decomposeRemoveOverlapFactory(glyph, font)
+    if glyph.name in cache:
+        new = cache.get(glyph.name)
+    else:
+        new = decomposeRemoveOverlapFactory(glyph, font)
+        cache[glyph.name] = new
     if new.box is None:
         return 0
     p = AreaPen(font)
@@ -77,39 +85,61 @@ def calculateGlyphCoverage(glyph, font=None):
         print("caught NotImplementedError in areaPen draw", glyph.name)
         return None
     area = p.value
-    xMin, yMin, xMax, yMax = glyph.box
+    if hasattr(glyph, "box"):
+        xMin, yMin, xMax, yMax = glyph.box
+    else:
+        xMin, yMin, xMax, yMax = glyph.bounds
     coverage = area/(font.info.unitsPerEm * glyph.width)
     return coverage
 
-def getFontCoverage(f):
+def getFontCoverage(f, glyphCache=None):
     """
         Calculate a weighted average of all glyph coverages.
         Use frequencies of multiple languages to average out language specific bias.
         So it does not use all the glyphs, just the A-Z, a-z for the languages we have fequencies for.
     """
     total = []
-    cmap, supportedLanguages = coverage.data.checkLanguages(f)
-    if not cmap:
-        # a font without unicode values?
-        return None
+    if glyphCache is None:
+        glyphCache = {}
+    supportedLanguages = coverage.data.checkLanguages(f)
+    # make a prioritised list of glyphnames:
+    # - only the glyphs we need for the tables
+    # - and the components they need
+    # - then do the glyphs without components first
+    # - so that remove overlap work will propagate to the compoents, saving work
+    simpleGlyphs = []
+    complexGlyphs = []
+    for name in coverage.data.coverageNames:
+        if not name in f: continue
+        g = f[name]
+        if len(g.components)==0:
+            simpleGlyphs.append(name)
+        else:
+            complexGlyphs.append(name)
+        
     if not supportedLanguages:
         return None
     for lang in supportedLanguages:
         table = coverage.data.frequencies[lang]
         languageTotal = 0
-        for glyphName, weight in table.items():
+        for glyphName in simpleGlyphs + complexGlyphs:
+            if not glyphName in table:
+                continue
+            weight = table[glyphName]
+            #for glyphName, weight in table.items():
             if glyphName in f:
                 g = f[glyphName]
             else:
                 continue
             try:
-                a = calculateGlyphCoverage(g, f)
+                a = calculateGlyphCoverage(g, f, cache=glyphCache)
             except:
                 if f.path is not None:
                     fontName = os.path.basename(f.path)
                 else:
                     fontName = "object: %s-%s"%(f.info.familyName, f.info.styleName)
                 print("failed calculating the coverage for %s in %s"%(g.name, fontName))
+                traceback.print_exc(file=sys.stdout)
                 a = 0
             if a > 0:
                 languageTotal += a * weight
@@ -121,10 +151,7 @@ def getFontWidth(f):
         Calculate a weighted average of all glyph advance widths.
     """
     total = []
-    cmap, supportedLanguages = coverage.data.checkLanguages(f)
-    if not cmap:
-        # a font without unicode values?
-        return None
+    supportedLanguages = coverage.data.checkLanguages(f)
     if not supportedLanguages:
         return None
     for lang in supportedLanguages:
@@ -141,6 +168,7 @@ if __name__ == "__main__":
     try:
         font = CurrentFont()
         if font is not None:
+            print(os.path.dirname(font.path))
             k = font.keys()
             k.sort()
             totes = []
