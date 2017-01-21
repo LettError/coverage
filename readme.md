@@ -40,10 +40,24 @@ The numerical average of the densities calculated for a couple of languages can 
 
 Supported in this code: Albanian, Basque, Bosnian, Catalan, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, German, Hungarian, Icelandic, Italian, Latvian, Lithuanian, Norwegian, Polish, Portuguese, Romanian, Slovak, Slovenian, Spanish, Swedish and Turkish.
 
-### Comparing fonts
+## Width
+We can also calculate a representative value for the average width of a font. There is no absolute minimum or maximum, but we can establish some rules for this value. Considering:
 
-Here is a graph of a couple of typefaces with different weights. Horizontally is the coverage value, plotted against `font.info.openTypeOS2WeightClass`.
-![Comparing a couple of fonts](graph.png)
+- a numerical average width of all characters in a font will not be enough: we need to incorporate character frequencies for a couple of languages.
+- **Font.unitsPerEm** needs to be involved: we should be able to compare the width values of fonts with different ems. A TrueType version of the font with a 2048 em should get the same result as a CFF version with a 1000 unit em. 
+
+### Method
+
+* Single font, single language: `sum (normalized freq * char width) / font.unitsPerEm`
+
+* Avaerage of all languages: `the numerical average of all results of all available languages`
+
+## Comparing fonts with coverage and width
+
+Here are two graphs of a couple of typefaces with different weights. Horizontally is the coverage value, plotted against `font.info.openTypeOS2WeightClass`.
+![Graph 1 Calculated font weight values plotted against the OS/2 weight class values.](graph.png)
+
+*Graph 1*
 
 * Most "Regular" values are at 400, most "Bold" values at 700, but the corresponding coverage values are spread much wider. This illustrates that `font.info.openTypeOS2WeightClass` is not a reliable indicator for weight.
 * Letter Gothic Bold is actually lighter than most.
@@ -51,17 +65,15 @@ Here is a graph of a couple of typefaces with different weights. Horizontally is
 * Roboto Black has a weightClass value of 400, it looks out of place.
 * These typefaces were selected rather arbitrarily: I happen to have the data. The fonts might not be the latest version.
 
-## Width
-We can also calculate a representative value for the average width of a font. There is no absolute minimum or maximum, but we can establish some rules for this value. Considering:
 
-- a numerical average width of all characters in a font will not be enough: we need to incorporate character frequencies for a couple of languages.
-- **Font.unitsPerEm** needs to be involved: we should be able to compare the width values of fonts with different ems. A TrueType version of the font with a 2048 em should get the same result as a CFF version with a 1000 unit em. 
+![Graph 2 Calculated font weight values plotted against calculated font width values.](graph_weight_width.png)
 
-## Method
+*Graph 2*
 
-* Single font, single language: `sum (normalized freq * char width) / font.unitsPerEm`
-
-* Avaerage of all languages: `the numerical average of all results of all available languages`
+* Letter Gothic has no width change from Medium to Bold.
+* Verdana gets quite a lot wider in the Bold.
+* Times Bold and Caslon Bold are very close in coverage and width.
+* Roboto has quite a range in weight without much change in width.
 
 ## Discussion
 The frequency tables used in this calculation do not include punctuation or wordspaces. In many typefaces the punctuation symbols are lighter than the letters and that would skew the result. But then the texts used to compile the frequency tables would need to be examined as well: are all the texts on a comparable subject for instance? How do the average line lengths compare? Are there more or fewer quotations in the text? How does the word space fit in all this? 
