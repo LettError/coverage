@@ -163,8 +163,18 @@ def getFontWidth(f):
         total.append(languageTotal/len(table))
     return sum(total) / len(supportedLanguages)
 
-    
-if __name__ == "__main__":
+
+def measureAllFonts():
+    for font in AllFonts():
+        if font is None:
+            continue
+        if font.path is not None:
+            print(os.path.basename(font.path))
+        print("weighted font coverage", getFontCoverage(font))
+        print("weighted font width", getFontWidth(font))
+        print
+
+def test():
     try:
         font = CurrentFont()
         if font is not None:
@@ -182,3 +192,7 @@ if __name__ == "__main__":
             print("\nweighted font width", getFontWidth(font))
     except NameError:
         pass
+        
+if __name__ == "__main__":
+    measureAllFonts()
+
