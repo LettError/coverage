@@ -1,16 +1,16 @@
 
-#A calculation for the gray level of text
+# A calculation for the gray level of text
 
 As any introduction to typography will tell you, font families come in different *weights*, ranging from thin to black and many steps in between. These weights are used to create hierarchies and structure within the text. A bold headline will catch the attention. A lighter weight for reading, etc. While the word **weight** has connotations of physics and empirical evidence, the typographic reality is a bit messy. Let's start by having a look at the data in the font.
 
-##Names
+## Names
 While care is given to *naming* the different weights within a family, there are great differences *between* typefaces. There is no guarantee that the *bold* in one typeface has the same weight as a similarly named weight in another. This is usually not really a problem: typographers, designers and anyone selecting a font will do so by looking at the font first and not rely on the name. Bottom line is that the font name does not really provide reliable information about the weight.
 
-##WeightClass
+## WeightClass
 The OpenType font format has the **usWeightClass** value [[specification]](https://www.microsoft.com/typography/otspec/os2.htm#wtc). On a scale between 0 to 1000, this value can be used, for instance, to order the weights in a font in a menu, or to select a weight that is "bolder" than the current font. That looks more promising.
 Unfortunately, assigning the fontWeight value is not easy: older applications expect this value only in steps of 100 and some even respond with unexpected results to values under 250. There is not much room for families with many weights, the values have to be assigned "by hand" and often represent some sort of ranking and is seperate from any geometry in the font. So, like the font names, the fontWeight value can not really be used to make objective comparisons between typefaces.
 
-##Ink
+## Ink
 But the weight differences are real: we can observe them by looking at text. So maybe we need to see how the individual marks on the page contribute to the weight of the text. And then work our way up. A glyph in a Latin font has a rectangle that is defined by its advance width and a height: either the font's units per em value, or the distance between ascender and descender. The shapes in the glyph may stick out of the rectangle, but generally they don't.
 In simple text shaping these rectangles are lined up next to each other. There are of course many, much more complex ways in which the glyphs can be arranged.
 
