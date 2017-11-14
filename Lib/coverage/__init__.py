@@ -84,12 +84,7 @@ def calculateGlyphCoverage(glyph, font=None, cache=None):
     except NotImplementedError:
         print("caught NotImplementedError in areaPen draw", glyph.name)
         return None
-    area = p.value
-    if hasattr(glyph, "box"):
-        xMin, yMin, xMax, yMax = glyph.box
-    else:
-        xMin, yMin, xMax, yMax = glyph.bounds
-    coverage = area/(font.info.unitsPerEm * glyph.width)
+    coverage = p.value/(font.info.unitsPerEm * glyph.width)
     return coverage
 
 def getFontCoverage(f, glyphCache=None):
@@ -107,26 +102,21 @@ def getFontCoverage(f, glyphCache=None):
     # - and the components they need
     # - then do the glyphs without components first
     # - so that remove overlap work will propagate to the compoents, saving work
-    simpleGlyphs = []
-    complexGlyphs = []
+    availableGlyphs = []
     for name in coverage.data.coverageNames:
         if not name in f: continue
         g = f[name]
-        if len(g.components)==0:
-            simpleGlyphs.append(name)
-        else:
-            complexGlyphs.append(name)
+        availableGlyphs.append(name)
         
     if not supportedLanguages:
         return None
     for lang in supportedLanguages:
         table = coverage.data.frequencies[lang]
         languageTotal = 0
-        for glyphName in simpleGlyphs + complexGlyphs:
+        for glyphName in availableGlyphs:
             if not glyphName in table:
                 continue
             weight = table[glyphName]
-            #for glyphName, weight in table.items():
             if glyphName in f:
                 g = f[glyphName]
             else:
